@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+postgres
+.postgres
+postgres.txt
+.postgres.txt
+
+
 # C extensions
 *.so
 
