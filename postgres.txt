@@ -1,6 +1,0 @@
-backend-server!!!!
-
-maintenance DB - postgres
-username - postgres
-port - 5432
-pass - postgres
