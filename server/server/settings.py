@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,11 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 
 
 # Application definition
@@ -43,8 +47,12 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
 
     'api.apps.ApiConfig',
+
+    'apps.events',
+    'apps.users',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +68,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'server.urls'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 TEMPLATES = [
     {
@@ -94,6 +104,33 @@ DATABASES = {
     }
 }
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+      'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+      'rest_framework.permissions.AllowAny',
+    ),
+    # FOR PROD
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    # 'rest_framework.permissions.IsAuthenticated',
+    # ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "UPDATE_LAST_LOGIN": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": config('SECRET_KEY'),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "user_id",
+    "USER_ID_CLAIM": "user_id",
+    "TOKEN_OBTAIN_SERIALIZER": "users.serializers.MyTokenObtainPairSerializer",
+    
+
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
