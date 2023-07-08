@@ -18,9 +18,9 @@ services:
       - DEBUG
       - ALLOWED_HOSTS
     depends_on:
-      - db
+      - postgresdb
 
-  db:
+  postgresdb:
     image: postgres:13-alpine
     restart: always
     volumes:
