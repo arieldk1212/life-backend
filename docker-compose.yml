@@ -11,11 +11,11 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
-    env_file:
-      - .env
     volumes:
       - ./server:/server
       - ./data/web:/vol/web
+    env_file:
+      - .env
     environment:
       - SECRET_KEY
       - DEBUG
