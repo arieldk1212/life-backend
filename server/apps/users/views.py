@@ -1,12 +1,14 @@
-from rest_framework import status, generics
+from .serializers import  *
 from rest_framework.views import APIView
+from rest_framework import status, generics
 from rest_framework.response import Response
+from api.permissions import AllowAnyPermission
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomUserSerializer, MyTokenObtainPairSerializer, CustomUserUpdatePasswordSerializer, CustomUserUpdateEmailSerializer, CustomUserUpdateUsernameSerializer
-
 
 class SignupView(APIView):
+  permission_classes = [AllowAnyPermission]
+
   def post(self, request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
@@ -20,7 +22,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 class ChangePasswordView(generics.UpdateAPIView):
-
   permission_classes = [IsAuthenticated]
   serializer_class = CustomUserUpdatePasswordSerializer
 
@@ -83,3 +84,20 @@ class UpdateUserUsernameView(generics.UpdateAPIView):
       }
       return Response(response)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DestroyUserView(generics.DestroyAPIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = CustomUserDestroySerializer
+
+  def get_object(self, queryset=None):
+    return self.request.user
+  
+  def destroy(self, request, *args, **kwargs):
+    self.object = self.get_object()
+    self.object.delete()
+    response={
+     'status': status.HTTP_200_OK,
+     'message': 'User deleted successfully',
+      'data': []
+    }
+    return Response(response)

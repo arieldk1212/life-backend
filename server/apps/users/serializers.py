@@ -74,7 +74,13 @@ class CustomUserUpdateUsernameSerializer(serializers.ModelSerializer):
 class CustomUserDestroySerializer(serializers.ModelSerializer):
   class Meta:
     model = CustomUser
-    fields = ('username', 'password')
+    fields = ('password',)
 
   def validate_password(self, value):
-    
+    aprroved_password = CustomUser.objects.filter(password=value).exists()
+    if not password:
+      raise ValueError('Password is Incorrect')
+    return True
+
+class LogoutCustomUserSerializer(serializers.ModelSerializer):
+  pass
