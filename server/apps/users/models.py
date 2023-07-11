@@ -4,20 +4,23 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
-
-  def create_user(self, email, password=None):
+  def create_user(self, email, username=None, password=None):
     if not email:
       raise ValueError('user Must Have An Email Address!')
+    if not username:
+      raise ValueError('user Must Have A Username!')
     if not password:
       raise ValueError('Need a Password to Continue...')
     email = self.normalize_email(email)
     user = self.model(email=email)
     user.set_password(password)
-    user.save(using=self._db)
+    user.save()
     return user
 
-  def create_superuser(self, email, password=None, **kwargs):
+  def create_superuser(self, email, username=None, password=None, **kwargs):
     if not email:
+      raise ValueError('user Must Have A Username!')
+    if not username:
       raise ValueError('user Must Have An Email Address!')
     if not password:
       raise ValueError('Need a Password to Continue...')
@@ -25,11 +28,10 @@ class CustomUserManager(BaseUserManager):
     user.is_staff = True
     user.is_superuser = True
     user.is_active = True
-    user.save(using=self._db)
+    user.save()
     return user
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-
   user_id = models.CharField(primary_key=True, max_length=32, default=generate_id, editable=False)
   email = models.EmailField(max_length=100, unique=True)
   username = models.CharField(max_length=20)

@@ -1,13 +1,14 @@
 from .serializers import  *
+from api.permissions import *
+from .models import CustomUser
 from rest_framework.views import APIView
 from rest_framework import status, generics
 from rest_framework.response import Response
-from api.permissions import AllowAnyPermission
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 class SignupView(APIView):
-  permission_classes = [AllowAnyPermission]
+  # permission_classes = [AllowAnyPermission]
 
   def post(self, request):
     serializer = CustomUserSerializer(data=request.data)
@@ -16,11 +17,20 @@ class SignupView(APIView):
       return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class MyTokenObtainPairView(TokenObtainPairView):
   serializer_class = MyTokenObtainPairSerializer
 
-
+class CustomUserListView(generics.ListAPIView):
+  permission_classes = [AdminUserPermission]
+  serializer_class = CustomUserListSerializer
+  queryset = CustomUser.objects.all()
+  
+  def get_queryset(self):
+    user = self.request.user
+    if user.is_superuser:
+      return CustomUser.objects.all()
+    return CustomUser.objects.filter(username=user.username)
+    
 class ChangePasswordView(generics.UpdateAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = CustomUserUpdatePasswordSerializer

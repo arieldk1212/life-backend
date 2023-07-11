@@ -14,15 +14,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
     user.save()
     return user
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer): 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
   @classmethod
   def get_token(cls, user):
     token = super().get_token(user)
     token['email'] = user.email
     token['username'] = user.username
-    
     return token
 
+class CustomUserListSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = CustomUser
+    fields = ('email', 'username', 'password', 'is_staff', 'is_superuser')
 
 class CustomUserUpdatePasswordSerializer(serializers.ModelSerializer):
   class Meta:
