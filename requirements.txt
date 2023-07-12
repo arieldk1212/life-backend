@@ -8,3 +8,4 @@ python-decouple
 django-cors-headers
 djangorestframework-simplejwt
 docker-compose
+Pillow

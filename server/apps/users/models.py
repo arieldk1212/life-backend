@@ -1,5 +1,6 @@
 from django.db import models
 from .utils.uuid import generate_id
+from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
@@ -50,4 +51,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     verbose_name = 'User'
     verbose_name_plural = 'Users'
     ordering = ['-is_superuser', '-is_staff']
+    
+User = get_user_model()    
+
+class CommonUser(models.Model):
+  user_relation = models.ForeignKey(User, on_delete=models.CASCADE)    
+
+class UserProfile(CommonUser):
+  attachment = models.FileField(blank=True, null=True)
+  
 

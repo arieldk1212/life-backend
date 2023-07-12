@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     'apps.events',
     'apps.users',
+    'apps.health',
 ]
 
 MIDDLEWARE = [
